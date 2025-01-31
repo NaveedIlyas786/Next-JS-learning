@@ -1,0 +1,790 @@
+
+********************** Geeky Shows Next JS *********************
+
+
+index (/) path would be page.jsx inside app folder
+
+http://localhost:3000/
+
+*****Routing*******
+
+1)  to target the file we should hit that folder name instead of file name for example:
+
+profile
+   page.jsx
+
+then we shall access it only by putting ===>  http://localhost:3000/profile
+
+*****Route grouping******
+
+2) if there is path like this way ==== >    http://localhost:3000/mydata/userInfo
+ and if you want to skip this folder "mydata" then we shall implement on it *route grouping* and simply we just have to set
+ paranthesis around that folder like (mydata), Now it would work only at this address ===> http://localhost:3000/userInfo
+
+folder structure is:
+
+(mydata)
+   userInfo
+
+3) If the target page is dynamic means page is displaying the information for different users means Id's based, then
+ we should have to name the folder like this way ==> [id] in square brackets, if we want to access data id based,
+ folder structure for example:
+ 
+profile
+    [id]
+       page.jsx                  Now Url address would look like =======>  http://localhost:3000/profile/3
+
+ 
+                   ********* CODE Example *********
+
+				const MyProfile = ({params}) => {
+  		   			return (
+    						<div>My profile {params.id}</div>
+				  	   )
+					 }
+
+				export default MyProfile
+
+
+******** Capture All Routes **********
+
+4) means if you want in specific folder the data should be fetched at every extended url address then you can follow this approach
+
+   you have to set that file folder with square brackets with spread operator ===> [...posts]
+
+for example:
+
+ blog
+   [...posts]
+       page.jsx                  Now Url address would look like =======>  http://localhost:3000/blog/posts
+  
+				 it will work as expected even if you change this address,
+
+				 http://localhost:3000/blog/posts/learn-python/sdsfd/dfsdd
+
+				 it would still display the posts page data.(means address after slash posts would not effect that page displaying)
+
+				 means it will capture all routes
+
+
+ ****** Optional extended route ******
+
+5) (Not very useful for development): if you want here page.jsx should accessed also if a user put only the path till blog, we can make it optional then, we
+   just have to put double square brakets around spread operator extended prefix
+
+
+for example:
+
+ blog
+   [[...posts]]
+       page.jsx                  Now Url address would also work on this =======>  http://localhost:3000/blog/
+  
+				 it will work as expected even if you implement this address,it will display the page.jsx data
+
+
+
+*************** Parallel Routes or Conditional Route Render ******************
+
+6) this means in *1*-file multiple files would be processed to display: (in this case it use the slots and it is the slot @left and @right,
+   means page with @ symbol is slot)
+
+"folder structure: "
+
+
+ colorbox
+      @left
+         page.jsx
+      @right
+         page.jsx
+
+      layout.js
+      page.jsx  
+
+ So in *layout.js*:
+       
+          export default function colorBoxlayout({children,left, right}){
+  		const isSidebar =false
+		  return (
+ 		   <div>
+		    {children}
+		          {/* {left} */}
+ 		         {/* {right} */}
+
+	// if you want to implement conditional routing then you can work with this
+
+ 		     {isSidebar ? left : right}
+   		 </div>
+		  )
+		}
+
+
+
+*********************************** Layout **********************************
+
+we can say, layout is that structure where different components are set to view on 1 pages, it works as component based
+
+for example:
+
+I want to display header component of the application at every page top then we shall make the layout for this behavior:
+
+such as: (folder structure)
+
+ Admin
+    dashboard
+    	page.jsx
+    profile
+	page.jsx
+    
+    layout.js
+
+ components
+     AdminHeader.jsx
+	
+
+
+   *** layout.jsx: ***
+
+        import AdminHeader from "/components/AdminHeader"
+
+	export default function Adminlayout({children}){
+  
+  	return (
+    	<div>
+
+    	<AdminHeader/> // it is component and it will display on over all pages top
+    	{children}  
+ 
+    	</div>
+	  )
+	}
+
+
+************************ Link *************************
+
+in NextJs <a></a> has been replaced with <Link></Link>
+
+folder structure:
+
+	src
+ 	  app
+            page.jsx  
+	    user
+	     profile
+		[id]
+		  page.jsx
+
+            components
+             Learnlink.jsx
+
+
+  LearnLink.jsx:
+     
+	const Learnlink = ()=>{
+  	   const id = 2
+
+	   return (
+    		<>
+    		  <Link href="/admin/dashboard">Goto Admin Dashboard</Link>
+   		  <Link href={`/userProfile/${id}`}> Goto user Profile</Link>
+    		</>
+  		)
+	    }
+
+	export default Learnlink
+
+
+ ***** In app folder (page.jsx) *****
+
+	import Learnlink from '/components/LearnLink'
+
+	     const page = () => {
+  		return (
+    		  <div>
+        		<Learnlink/>
+    		</div>
+  		)
+	     }
+
+	 export default page 
+
+
+
+
+************************  useRouter Hook =>  (if you want to apply Programatically navigation ) *************************
+
+Using the *useRouter* Hook we can navigate to any page programatically
+for this testing, we make the component:
+
+	*** useRouterLearning.jsx ****
+
+	'use client'
+	import { useRouter } from "next/navigation"
+	const UseRouterLearning = () => {
+	    const router = useRouter()
+	  return (
+	    <div>
+	        <h1>UseRouterLearning</h1>
+	        <button type="button" onClick={()=>router.push("/simpleRouting/blogs")}>Goto Blog Page</button>
+	    </div>
+	  )
+	}
+
+	export default UseRouterLearning
+
+Now: (import in main page.jsx file)
+
+	*** Folder Structure ****
+
+	src
+	  app
+	    page.jsx:
+
+	import UseRouterLearning from "@/components/useRouterLearning"
+	import "./page.css"
+
+	const page = () => {
+	  return (
+	    <div className="container">
+	        <h1>Next Project Learning</h1>
+	        <UseRouterLearning/>
+	    </div>
+	  )
+	}
+
+	export default page
+
+
+
+
+**************************** Basic Difference  b/w Server and Client Component ****************************
+
+By Default every component is *Server Component*, but you can make the any component to *Client* component easily by using
+the *use client* diractive at top of component.
+
+
+** Point to Remember ** :  
+		Somethings a *Server* component can't support like (states, hooks and for events), for this we need a *Client* component and we can
+                convert the server component into client component using the *use client* diractive at the top of component. And *Client* component is used
+		for building the UI's to show on the screen.
+
+1) And in Client compoenent, if you use any other component either that component is initialized as a server component before but after
+   using in Client component, it will also behave as a Client component
+
+
+You can Learn in depth about the difference of (Server and Client) components at the official documentation:
+
+
+
+************************** Use of CSS Modal **************************
+
+
+There is a *CSS* Global file in our project which is used to apply the *CSS* on all pages,
+BUT
+We can also make the *CSS Modal*, which will used across all project
+
+1) First we shall make the *component* for it
+
+LearnCSSModule.jsx:
+  	
+	
+2) Make the folder with name *css* and with file_name *LearnCSSModule.module.css* in *src* folder,(Here module.css is the extension to make CSS module)
+
+LearnCSSModule.module.css: 
+
+.h1Css{
+    font-size: 30px;
+    color: yellow;
+}
+
+Now we shall use this CSS in any page, suppose in *LearnCSSModule.jsx* component
+
+import styles from "../css/LearnCSS.module.css"
+const LearnCSSModule = () => {
+  return (
+    <div className={styles?.h1Css}>LearnCSSModule</div>
+  )
+}
+
+export default LearnCSSModule
+
+
+
+
+************************** Use of Optimized Image tag recommended from NEXT-JS **************************
+
+
+All Images will placed for using purposes in *Public* folder 
+
+Make component for learning purposes with name *LearnUseImage.jsx* :  
+
+(Here *<Image />* tag is optimized from Next-JS, means it reduces the image size: e.g: from 5 to 2 MB) same as other tags are also exist for optimization.
+
+*LearnUseImage.jsx*
+
+import Image from "next/image"
+import DeskImage from "../../public/deskimg.webp"
+const LearnUseImage = () => {
+  return (
+    <div>
+      <Image src={DeskImage} width={200}/>
+    </div>
+  )
+}
+
+export default LearnUseImage
+
+
+
+************************* Data Fetching in NEXT-JS *****************************
+
+
+Same process of data fetching like React js, Here I used the fetched functionality in seperate component and
+import that component in main file, means where you want to display the data
+
+
+
+
+
+********* Backend Start in NEXT-JS ****************
+
+in *app* folder path would be => api/products full address is (http://localhost:3000/api/products)
+
+*****************   GET DATA (GET Request)   ***************
+
+** route.js ** 
+
+import { NextResponse } from "next/server";
+
+export async function GET(req) {
+
+    return NextResponse.json({ message: "Hello World get Data" },{status: 200});
+}
+
+
+*****************   GET DATA (GET Request id based)   ***************
+
+** route.js ** (api/products/[id]/route.js) and url would be "api/products/[id]"
+
+import { NextResponse } from "next/server";
+
+export const GET = async(req)=> {
+
+    return NextResponse.json({ message: "Data recieved id based" },{status: 200});
+}
+
+
+*****************   GET DATA (How we can get *id* here, for this we have context as 2nd parameter which will give us the id)   ***************
+                                  using this *id* we can implement searching, filtering and others operations
+
+
+** route.js ** (api/products/[id]/route.js) and url would be "api/products/[id]"
+
+
+import { NextResponse } from "next/server";
+
+export const GET = async (req, context) => {
+  const paramsData = await context.params; // Await the context before accessing params
+  console.log("params: ", paramsData);
+  const getID = paramsData.id;
+
+  console.log("Id is: ", getID);
+
+  return NextResponse.json({ message: "ID received", id: getID }, { status: 200 });
+};
+
+
+*****************   GET URL Query Params   ***************
+
+Suppose you have Url address in your web page => ** http://localhost:3000/api/products?search=%22Java%22 **
+
+Here the data after question mark *?* is queryParams String and we can that data value at our web page like as:
+
+** route.js **
+
+import { NextResponse } from "next/server";
+
+export async function GET(req) {
+    
+    const {searchParams} = new URL(req.url)
+    console.log("searchQueryParams: ",searchParams.get("search")) 
+
+    return NextResponse.json({ message: "Hello World get Data" });
+}
+
+
+*****************   Understanding Cookies   ***************
+
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+
+export async function GET(req) {
+    
+    const cookie1 = req.cookies
+    console.log("cookie1: ",cookie1) 
+    
+    //There is also the cookie function
+    
+    const cookiefun = cookies()
+    console.log("cookiefun: ",cookiefun) 
+
+    return NextResponse.json({ message: "Hello World get Data" });
+}
+
+
+
+
+*****************   POST DATA (POST Request)   ***************
+
+** route.js **  (api/folderName/route.js)
+
+import { NextResponse } from "next/server";
+
+export async function POST(req) {
+    console.log("Post Req: ",req)
+
+   // const res = await req.json();    ------>	//using this we can post the data in json form 
+    const res = await req.formData();  ------>  //using this we can post the data in FormData form
+
+    console.log("Response: ",res)
+    return NextResponse.json({ message: "Data posted successfully!" },{status:201});
+}
+
+
+*****************   Server Side Rendering (means if you want to send request to third party api then you can also set this at server    ***************
+                    side (for securing the data of Api or to avoid the hijacking the Api because some Api's can paid) instead of Client side)
+           	    doing this your data will not display or leaked at Client side itself but we can display by our wish using our own api address like as:
+
+
+** route.js **  (api/folderName/folderName/route.js) our address can be (http://localhost:3000/api/blog/posts) to fetch data at Frontend side, Api Url address depends on your choice
+
+
+import { NextResponse } from "next/server";
+
+ export const GET = async (req, context) => {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts",{
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const dataResponse = await response.json();
+    return NextResponse.json(dataResponse, { status: 200 });
+ }
+
+
+
+
+*******************************   Database (Mongo DB) to save data    **********************************
+
+**** MongoDb Connection  *****
+
+** in src/app -> lib --> connectDB.js **
+
+
+import mongoose from 'mongoose';
+
+export default async function connectDB() {
+    try {
+        const DBOptions = {
+            dbName: process.env.DBNAME, // Only pass dbName and authSource
+            authSource: process.env.DBAUTHSOURCE, // Ensure the correct spelling
+        };
+
+        await mongoose.connect(process.env.DATABASE_URL, DBOptions);
+        console.log('MongoDB is connected');
+    } catch (error) {
+        console.error("MongoDB connection error:", error);
+    }
+}
+
+// Now to check if the connection is successful, we can import the connectDB function in the api --> callMongoDB folder and in route.js file and call it.
+
+ 
+*********** Schema Model **************
+
+** in src/app -> models --> Post.js **
+
+
+import mongoose from "mongoose";
+
+const postSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  content: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+});
+
+// compiling Schema into a Model
+
+const Post = mongoose.models.Post || mongoose.model("Post", postSchema); // it means check if already exist then use that model, and if not then create the new one
+
+export default Post;
+
+
+
+****** Call the connectDB function in api folder**********
+
+** in src/app/api/callMongoDB/route.js **
+
+
+import connectDB from "@/app/lib/connectDB";
+import { NextResponse } from "next/server";
+import PostModel from "@/app/models/Post";
+
+export async function GET(req) {
+    try {
+        // Connect to the database
+        await connectDB();
+
+        // Fetch all posts
+        const result = await PostModel.find();
+
+        return NextResponse.json({ result }, { status: 200 });
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        return NextResponse.json({ message: "Something went wrong", error: error.message }, { status: 400 });
+    }
+}
+
+
+******** Fetch data from MongoDB and display on WebPage *********
+
+*** Components **** GetData.jsx
+
+
+const getData = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/callMongoDB',{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    const data = await response.json();
+    console.log(data)
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
+export default async function GetDataFromDB(){
+  const data1 = await getData();
+  console.log("data1: ",data1)
+    return (
+        <div>
+            {data1?.map((a)=>(
+              <div key={a._id}>
+              
+            <h1>{a.title}</h1>
+            <h4>{a.content}</h4>
+              </div>
+          ))}
+          </div>
+    )
+}
+
+
+
+
+now call this "GetDataFromDB" function in main page to display data on webpage
+
+
+**page.jsx:**
+
+
+import "./page.css"
+import GetDataFromDB from "@/components/GetData"
+
+const page = () => {
+  return (
+    <div className="container">
+        <h1>Next Project Learning</h1>
+        <GetDataFromDB/>
+    </div>
+  )
+}
+
+export default page
+
+
+
+*****************************  Post Data to Database (mongoDB) through frontend forms   *****************************
+
+** in src/app/api/callMongoDB/route.js **
+
+import connectDB from "@/app/lib/connectDB";
+import { NextResponse } from "next/server";
+import PostModel from "@/app/models/Post";
+
+export async function POST(req){
+    const responseBody =await req.json()
+    try {
+        await connectDB()
+        const readyPostedData = await PostModel.create(responseBody)
+        return NextResponse.json(readyPostedData,{status:201})
+    } catch (error) {
+        
+        return NextResponse.json({message: "Something went wrong!"},{status:400})
+    }
+}
+
+
+*** Components **** PostData.jsx  (Client Side)
+
+"use client";
+
+import { useState } from "react";
+
+const PostData = () => {
+    const [postData, setPostData]= useState({
+        title: "",
+        content: ""
+    })
+
+    const handleChange = (e)=>{
+        setPostData({...postData, [e.target.name] : e.target.value })
+    } 
+
+    const handleSubmit = async(e)=>{
+        e.preventDefault()
+        const data = await fetch('http://localhost:3000/api/callMongoDB',{
+            method: "POST",
+            body: JSON.stringify(postData)
+        });
+
+        console.log("Data posted: ", data)
+    }
+
+  return (
+    <div>
+        <h1>Post Data To Database</h1>
+        <form action="" onSubmit={handleSubmit} >
+            <strong>Title</strong> <input type="text" name="title" value={postData.title} onChange={handleChange} />
+            <strong>Content</strong> <input type="text" name="content" value={postData.content} onChange={handleChange} />
+            <button type="submit" className="btn btn-success">Submit</button>
+        </form>
+    </div>
+  )
+}
+
+export default PostData
+
+
+
+**page.jsx:** This is Main page
+
+import "./page.css"
+import PostData from "@/components/PostData"
+
+const page = () => {
+  return (
+    <div className="container">
+        <h1>Next Project Learning</h1>
+        <PostData/>
+    </div>
+  )
+}
+
+export default page
+
+
+
+*************************** Server Actions *********************** For *GET* Data
+
+It is the modern and advanced approach means now you will not have to create the seperate url's for CREATE and GET post. This "Server Action"
+has been covered this point, means now don't need to create the Api. Means You can directly insert data into the database and GET also directly.
+
+1)  Model will be same that we have created Already
+2) And We shall write the code of database connection directly in Component (And this comonent will be the server component), instead of at sepearte Api Url.
+   Means we don't need to go in Api folder and in specific file where the logic is set to fetch the data.
+
+
+
+*** Components **** GetData2.jsx  (Server Component) (directly get data from DB in component and call this component in Main page.jsx file to diplay data on webpage)
+
+import connectDB from "@/app/lib/connectDB";
+import PostModel from "@/app/models/Post";
+
+export default async function GetDataFromDBDirectly(){
+
+   await connectDB();
+   const data1 = await PostModel.find()
+
+  console.log("data1: ",data1)
+    return (
+        <div>
+            {data1?.map((a)=>(
+              <div key={a._id}>
+              
+            <h1>{a.title}</h1>
+            <h4>{a.content}</h4>
+              </div>
+          ))}
+          </div>
+    )
+}
+
+
+*************************** Server Actions *********************** For *POST* Data
+
+1) We can also *POST* or create the data directly from the server component need to goto the APi folder file to send data
+2) Also we shall not use any *state* or any handleChange, handleSubmit function there to set data, because it is the server component, So we shall use alternative modern way.
+3) Here in form we shall the action and name property in each input field to fetch user data, but not need onSubmit property.
+
+*** Components **** PostData2.jsx  (Server Component) (directly Post data to DB in component and call this component in Main page.jsx file to complete functionality)
+
+**Code:**
+
+import connectDB from "@/app/lib/connectDB"
+import PostModel from "@/app/models/Post"
+
+const create= async(formData)=>{
+    'use server'
+    await connectDB()
+
+    const result = await PostModel.create({
+        title: formData.get('title'),
+        content: formData.get('content')
+    })
+    console.log("Result is: ",result)
+}
+
+
+const PostData2 = () => {
+  return (
+    <div>
+        <h1>Post Data To Database</h1>
+        <form action={create}  >
+            <strong>Title</strong> <input className="inputs" type="text" name="title" />
+            <strong>Content</strong> <input className="inputs" type="text" name="content"/>
+            <button type="submit" className="btn btn-success">Submit</button>
+        </form>
+    </div>
+  )
+}
+
+export default PostData2
+
+
+
+***************************** Middleware ********************************
+
+1) Middleware runs before any request in next js (means if user direct hit the url */dashboard* then Middleware navigate that user to any other page automatically)
+
+2)  This will create at the same level as *app* folder, means in *src* folder this middleware.js file will create and logic will implement here.
+
+
+
+
+*******************************  Note (Advice) ----->  practice karty raho ******************************
+
+
+You can learn more through documentation such as (Loading UI and streaming)--> it can set in every file, means loading skeleton will display untill data will not display here,
+means many more useful features you can learn through documentation such as (Error handling or not-found files) will set in that specific folder to implement the functionality.
